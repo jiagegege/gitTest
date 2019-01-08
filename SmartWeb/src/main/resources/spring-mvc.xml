@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+   
+		
+		
+   <!-- Spring MVC -->
+   
+		<!-- 配置组件扫描 -->
+		<context:component-scan 
+			base-package="cn.huahai.tel.controller" />
+		<!-- 配置ViewResolver -->
+		<bean 
+			class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" 
+				value="/web/" />
+			<property name="suffix" 
+				value=".jsp" />
+		</bean>
+		
+		<!-- 注解驱动 -->
+		<mvc:annotation-driven />
+		<!--拦截器 -->
+		<!-- <mvc:interceptors>
+			<mvc:interceptor>
+				<mvc:mapping path="/main/*"/>
+				<mvc:mapping path="/excel/*"/>
+				<mvc:mapping path="/allNetwork/*"/>
+				<bean class = "cn.huahai.tel.interceptor.LoginInterceptor"></bean>
+			</mvc:interceptor>
+			<mvc:interceptor>
+				<mvc:mapping path="/user/*"/>
+				<bean class = "cn.huahai.tel.interceptor.VisitCountInterceptor"></bean>
+			</mvc:interceptor>
+			<mvc:interceptor>
+				<mvc:mapping path="/*/*"/>
+				<bean class = "cn.huahai.tel.interceptor.VisitRequestUrlInterceptor"></bean>
+			</mvc:interceptor>
+		</mvc:interceptors> -->
+		<!--定义文件上传解析器  -->
+		<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+			<property name="maxUploadSize" value="-1"/>
+			<property name="defaultEncoding" value="utf-8"/>
+		</bean>
+		
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

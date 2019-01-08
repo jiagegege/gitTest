@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.VisitCountMapper">
+	<!-- 访问统计相关持久层 -->
+	<!--void insertVisitData(@Param("path")String path,@Param("count")Integer count);-->
+	<insert id="insertVisitData">
+		insert into visitcount (path,count) values('${path}',1)
+	</insert>
+	<!-- void updateVisitData(@Param("path")String path,@Param("count")Integer count); -->
+	<update id="updateVisitData">
+		update visitcount set count=${count} where path='${path}'
+	</update>
+	<!--Integer getVisitDataByPath(@Param("path")String path);-->
+	<select id="getVisitDataByPath" resultType="Integer">
+		select count from visitcount where path='${path}'
+	</select>
+	<!--Integer pathExit(@Param("path")String path); -->
+	<select id="pathExit" resultType="Integer">
+		select count(*) from visitcount where path='${path}'
+	</select>
+	<!-- void insertIpdate(@Param("ip")String ip,@Param("date")String date); -->
+	<select id="insertIpdate">
+		insert into  VISIT_IP_COUNT (IP,VISIT_DATE) values('${ip}','${date}')
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

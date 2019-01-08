@@ -1,0 +1,68 @@
+body,html{
+	height: 100%;
+}
+body{
+	background: url(../img/login/login.jpg) no-repeat ;
+	background-size:100% 100%;
+	overflow: hidden;
+}
+.main{
+	width: 900px;
+	height: 500px;
+	margin: 0 auto;
+	margin-top: 125px;
+	/*background-color: rgba(225,225,225,.8);*/
+}
+.showLogin{
+	margin: 0 auto;
+	margin-top: 30px;
+	width: 300px;
+	min-height: 400px;
+}
+.showLogo{
+	border-left: 1px solid #0488d3;
+	padding-left: 10px;
+	height: 64px;
+}
+.showLogo > img{
+	margin-top: 5px;
+	height: 26px;
+}
+.formBlock{
+	margin-top: 30px;
+}
+.form-group >label{
+	color: #666;
+	font-weight: 300;
+}
+.imager{
+	width: 100%;
+}
+#code{
+	width: 30%;
+}
+#result{
+	width: 18%;
+	line-height: 30px;
+	text-indent: 3px;
+	
+}
+.ok{
+	color: green;
+}
+.error{
+	color:red;
+}
+.codeContent{
+	display: inline-block;
+	height: 40px;
+}
+#verifyIcon{
+	margin-left: 10px;
+}
+.ok{
+	color: green;
+}
+.err{
+	color:red;
+}

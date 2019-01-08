@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.LinkFailureMapper">
+	<!-- LinkFailure[] selectLinkFailure(); -->
+	<select id="selectLinkFailure" resultType="cn.huahai.tel.bean.LinkFailure">
+		SELECT 
+			A.*,rownum rn
+		FROM YM_LINK_STATE A where rownum &lt; 24
+	</select>
+	<!-- LinkFailure selectAllLinkFailure(@Param("tablename") String tablename); -->
+	<select id="selectAllLinkFailure" resultType="cn.huahai.tel.bean.LinkFailure">
+		select count(*) as num ,min(DATETIME) as datetime from ${tablename}
+	</select>
+	
+	<!--LinkFailure selectVipLinkFailure(@Param("tablename") String tablename);  -->
+	<select id="selectVipLinkFailure" resultType="cn.huahai.tel.bean.LinkFailure">
+		select count(*) as num,min(DATETIME) as datetime from ${tablename} where ENODEBID in (select ENODEBID from ym_sys_cell where
+		vip = 'VIP')
+	</select>
+	<!--LinkFailure selectPonitLinkFailure(@Param("tablename") String tablename ,@Param("regTablename") String regTablename);  -->
+	<select id="selectPointLinkFailure" resultType="cn.huahai.tel.bean.LinkFailure">
+		select count(*) as num,min(DATETIME) as datetime from ${tablename} where ENODEBID in (select distinct ENODEBID from YM_SYS_CELL t1 , ${regTablename} t2 where t1.ENODEBID_CELLID = t2.ENODEBID_CELLID)
+	</select>
+	<!--String selectDateTimeByTablename(@Param("tablename") String tablename);  -->
+	<select id="selectDateTimeByTablename" resultType="String">
+		select min(DATETIME) from ${tablename}
+	</select>
+	<!--void copyLinkFailTable(@Param("table_name_new")String table_name_new);-->
+	<update id="copyLinkFailTable">
+		create table ${table_name_new} as select * from YM_SYS_LINKBAD
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

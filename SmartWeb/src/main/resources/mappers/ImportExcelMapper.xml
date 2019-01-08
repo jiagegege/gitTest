@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.ImportExcelMapper">
+	<!-- Integer tableExist(String tablename);  -->
+	<!-- 查看表是否存在 -->
+	<select id="tableExist" parameterType="String" resultType="Integer">
+		select count(*) from user_tables where table_name = '${tablename}'
+	</select>
+	<!--void createTable(@Param("fields")List<String> fields,@Param("tablename")String tablename); -->
+	<!-- 创建表  -->
+	<select id="createTable">
+		CREATE TABLE ${tablename}
+		<foreach collection="fields" item="item" open="(" separator="," close=")">  
+            ${item}  VARCHAR2(120)
+        </foreach>  
+	</select>
+	<!-- void deleteTable(@Param("tablename")String tablename); -->
+	<!-- 删除表 -->
+	<update id="deleteTable" parameterType="String">
+		drop table ${tablename}
+	</update>
+	<!-- void changeTablename(@Param("oldTableName")String oldTableName,@Param("newTableName")String newTableName); -->
+	<!-- 更改表名 -->
+	<update id="changeTablename">
+		ALTER TABLE ${oldTableName} RENAME TO ${newTableName}
+	</update>
+	<!-- void insertData(
+			@Param("data") List<Map<String,String>> data,
+			@Param("fields") List<String> fields,
+			@Param("tablename")String tablename); -->
+	<!-- 批量插入 -->
+	<insert id="insertData">
+		 insert into ${tablename}  
+		 <foreach collection="fields" item="item" open="(" separator="," close=")">  
+            ${item}
+        </foreach>
+        <foreach collection="data" item="value" separator="UNION ALL" >  
+	        SELECT
+			<foreach collection="value" item="item" separator=",">  
+	            '${item}'
+	        </foreach>
+			FROM dual  
+	    </foreach> 
+	</insert>
+	<!-- void copyDistinctTable(); -->
+	<!-- 根据ENODEBID排序，记录ENODEBID出现的次数，然后选取次数是1的 -->
+	<update id="copyDistinctTable">
+	 <!-- create table YM_SYS_NB_T as (select * from(
+		select a.*,row_number() over(partition by a.ENODEBID order by ENODEBID) su from YM_SYS_CELL_T a )
+		where su=1) -->
+		<!-- 新版 复制sql-->
+		<!-- 根据rowid唯一性进行去重 -->
+		create table YM_SYS_NB_T as 
+		select * from YM_SYS_CELL_T T1 where rowid in 
+		(select min(rowid)  from  YM_SYS_CELL_T t2  where  t1.ENODEBID=t2.ENODEBID)
+		
+	</update>
+	<!-- void alterfield(@Param("tablename")String tablename,@Param("field")String field); -->
+	<update id="alterfield">
+		alter table ${tablename} add ${field} VARCHAR2(20)
+	</update>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

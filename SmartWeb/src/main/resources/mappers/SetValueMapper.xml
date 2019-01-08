@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.SetValueMapper">
+	<!-- /**
+	 *根据username 查找全网临界值的json数据
+	 * @param username 用户名
+	 * @return 全网的临界值的json数据 
+	 */
+	String selectAllNetJsonValue(@Param("username") String username);
+	/**
+	 *根据username 查找top小区临界值的json数据
+	 * @param username 用户名
+	 * @return top小区的临界值的json数据 
+	 */
+	String selectTopCellJsonValue(@Param("username") String username);
+	/**
+	 * 根据用户名更新全网级临界值json字符串
+	 * @param username 用户名
+	 * @param jsonvalue 新的全网信息临界值json字符串
+	 */
+	void updateAllNetJsonValue(@Param("username") String username,@Param("jsonvalue") String jsonvalue);
+	/**
+	 * 根据用户名更新top小区临界值json字符串
+	 * @param username 用户名
+	 * @param jsonvalue 新的top小区信息临界值json字符串
+	 */
+	void updateTopCellJsonValue(@Param("username") String username,@Param("jsonvalue") String jsonvalue); 
+	Integer getAllNetUserCount(@Param("username")String username);-->
+	
+	<select id="selectAllNetJsonValue" parameterType="String" resultType="String">
+		select jsonvalue from allnet_jsonvalue where username = '${username}'
+	</select>
+	<select id="selectTopCellJsonValue" parameterType="String" resultType="String">
+		select jsonvalue from topcell_jsonvalue where username = '${username}'
+	</select>
+	<update id="updateAllNetJsonValue" parameterType="String" >
+		UPDATE allnet_jsonvalue SET JSONVALUE = '${jsonvalue}' WHERE USERNAME = '${username}'
+	</update>
+	<update id="updateTopCellJsonValue" parameterType="String" >
+		UPDATE TOPCELL_JSONVALUE SET JSONVALUE = '${jsonvalue}' WHERE USERNAME = '${username}'
+	</update>
+	<select id="getAllNetUserCount" parameterType="String" resultType="Integer">
+		select count(*) from allnet_jsonvalue where username = '${username}'
+	</select>
+	<select id="getTopCellUserCount">
+		select count(*) from topcell_jsonvalue where username = '${username}'
+	</select>
+	<!-- void insertTopCellJsonValue(@Param("username") String username,@Param("jsonvalue") String jsonvalue); -->
+	<update id="insertTopCellJsonValue" parameterType="String">
+		insert into TOPCELL_JSONVALUE (username,jsonvalue) values('${username}','${jsonvalue}')
+	</update>
+	<update id="insertAllNetJsonValue" parameterType="String">
+		insert into allnet_jsonvalue (username,jsonvalue) values('${username}','${jsonvalue}')
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

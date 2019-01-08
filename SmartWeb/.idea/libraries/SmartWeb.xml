@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="SmartWeb">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/doc" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src/main/java" />
+      <root url="file://$PROJECT_DIR$/src/test/java" />
+    </SOURCES>
+  </library>
+</component>

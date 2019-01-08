@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.TopCellworkBaseMapper">
+	<!--公共sql -->
+	<!-- <sql id="field"> day1,${field},enodebid_cellid,ecellname_cn,ecellname,无线接通率,无线掉线率,切换成功率 
+		,流量GB,RRC加ERAB失败总次数, 拥塞次数,最大激活用户数,无线掉线率分子,上行干扰,RRC连接建立成功率, ERAB建立成功率,ERAB掉线率,上行流量GB,下行流量GB,上行PRB平均利用率, 
+		下行PRB平均利用率,小区可用率,RRC最大连接数,RRC连接总数, eNodeB寻呼数,RRC连接建立成功次数,RRC连接建立失败次数,RRC连接建立请求次数, 
+		ERAB建立成功数,ERAB建立失败数,ERAB建立请求数,无线掉线率分母,ERAB掉线次数, ERAB掉线率分母,切换请求次数,切换成功次数,切换失败次数,小区可用率分子,小区可用率分母, 
+		上行PDCP平均速率kbps, 下行PDCP平均速率kbps,eNB间切换成功次数,eNB间切换数,eNB间切换成功率,eNB内切换成功次数, eNB内切换数,eNB内切换成功率, 
+		用户面PDCP流量 </sql> -->
+	<sql id="field">
+		DAY1, ${field}, ENODEBID_CELLID, ECELLNAME_CN, ECELLNAME,
+		无线接通率, 无线掉线率, 切换成功率,
+		流量GB, RRC加ERAB失败总次数, 拥塞次数, 平均激活用户数, 最大激活用户数,
+		支持最大激活用户数, 无线掉线率分子, 上行干扰,
+		RRC连接建立成功率,
+		ERAB建立成功率, ERAB掉线率, 上行流量GB,
+		下行流量GB, 上行PRB平均利用率, 下行PRB平均利用率, 小区可用率, RRC最大连接数,
+		RRC连接总数, ENODEB寻呼数,
+		RRC连接建立请求次数, RRC连接建立成功次数, RRC连接建立失败次数, ERAB建立请求数,
+		ERAB建立成功数,
+		ERAB建立失败数,
+		无线掉线率分母, ERAB掉线次数, ERAB掉线率分母, 切换请求次数, 切换成功次数, 切换失败次数, 小区可用率分子,
+		小区可用率分母, 上行PDCP平均速率KBPS, 下行PDCP平均速率KBPS, ENB间切换成功次数, ENB间切换数,
+		ENB间切换成功率,
+		ENB内切换成功次数, ENB内切换数, ENB内切换成功率, 用户面PDCP流量, VOLTE话务量,
+		VOLTE接通率, VOLTE掉话率,
+		VOLTE掉话次数, VOLTE掉话分母, ESRVCC切换成功率, ESRVCC切换请求次数,
+		ESRVCC切换成功次数,
+		ESRVCC切换失败次数,
+		ESRVCC切换准备次数, ESRVCC切换失败总次数, VOLTE接入请求次数,
+		VOLTE接入成功次数, VOLTE接入失败次数, BTSVER,
+		QUARTER1, SDATETIME, OMC, IP, 基站状态,
+		链路测试时间, 小区管理状态, 小区操作状态, 日常公司, VIP,
+		基站类别,区域
+	</sql>
+	<!-- 激活用户计数,配置SCell的UE数,激活SCell的UE数,SCell配置请求数,小区上行PDCP丢包率,小区下行PDCP丢包率,CA能力UE数,平均激活用户数,SCell配置成功数,SCell数据量,双流占比,双流占比分子,双流占比分母, -->
+	<!-- CellInfoBase[] selectAllTopCell(@Param("tablename")String tablename, 
+		@Param("field")String field); -->
+	<!-- 查询前20条 降序排列 -->
+	<select id="selectAllTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.TopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+		SELECT
+		<include refid="field"></include>
+		FROM ${tablename}
+		) A
+		WHERE ROWNUM &lt;= 20
+		)
+		WHERE RN &gt;= 0 
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+
+	<!-- HourTopCellworkBase[] selectAllHourTopCell(@Param("tablename")String 
+		tablename); -->
+	<!-- 查询小时级别top数据 -->
+	<sql id="hourField">
+		上行流量GB,下行流量GB,上行PRB平均利用率,下行PRB平均利用率,小区可用率,
+		RRC最大连接数,RRC连接总数,ENODEB寻呼数,RRC连接建立请求次数,RRC连接建立成功次数,
+		RRC连接建立失败次数,ERAB建立请求数,ERAB建立成功数,ERAB建立失败数,无线掉线率分母,
+		ERAB掉线次数,ERAB掉线率分母,切换请求次数,切换成功次数,切换失败次数,小区可用率分子,
+		小区可用率分母,上行PDCP平均速率KBPS,下行PDCP平均速率KBPS,ENB间切换成功次数,
+		ENB间切换数,ENB间切换成功率,ENB内切换成功次数,ENB内切换数,ENB内切换成功率,
+		用户面PDCP流量,VOLTE接通率,VOLTE话务量,VOLTE掉话次数,VOLTE掉话分母,VOLTE掉话率,
+		ESRVCC切换请求次数,ESRVCC切换成功次数,ESRVCC切换失败次数,ESRVCC切换成功率,ESRVCC切换准备次数,
+		ESRVCC切换失败总次数,VOLTE接入请求次数,VOLTE接入成功次数,VOLTE接入失败次数,OMC,IP,基站状态,
+		链路测试时间,小区管理状态,小区操作状态,日常公司,VIP,基站类别,区域,SDATE,DAY1,HH,ENODEBID_CELLID,
+		ECELLNAME_CN,ECELLNAME,无线接通率,无线掉线率,切换成功率,流量GB,RRC加ERAB失败总次数,拥塞次数,
+		平均激活用户数,最大激活用户数,无线掉线率分子,上行干扰,RRC连接建立成功率,ERAB建立成功率,ERAB掉线率
+	</sql>
+	<sql id="DayField">
+		DAY1,ERAB建立请求数,小区可用率分母,切换成功率,流量GB,上行干扰,RRC连接总数,上行PDCP平均速率KBPS,
+		ESRVCC切换成功次数,ENODEB寻呼数,ENB间切换成功次数,基站类别,上行流量GB,上行PRB平均利用率,
+		ENB内切换成功率,小区管理状态,切换请求次数,用户面PDCP流量,ENODEBID_CELLID,ERAB掉线率,
+		ERAB建立成功率,VOLTE接通率,VOLTE接入请求次数,RRC加ERAB失败总次数,小区可用率,ERAB掉线率分母,
+		切换成功次数,ENB间切换成功率,VOLTE接入失败次数,RRC连接建立请求次数,无线掉线率分母,ENB内切换成功次数,
+		VIP,RRC连接建立失败次数,ESRVCC切换失败次数,SDATETIME,VOLTE话务量,拥塞次数,ERAB建立失败数,
+		小区可用率分子,平均激活用户数,ENB间切换数,ENB内切换数,ESRVCC切换准备次数,BTSVER,OMC,IP,
+		VOLTE掉话次数,VOLTE接入成功次数,日常公司,ERAB掉线次数,VOLTE掉话率,支持最大激活用户数,
+		RRC连接建立成功率,下行流量GB,VOLTE掉话分母,ECELLNAME,无线掉线率,链路测试时间,无线接通率,
+		ESRVCC切换成功率,基站状态,小区操作状态,RRC最大连接数,RRC连接建立成功次数,ESRVCC切换失败总次数,
+		ECELLNAME_CN,切换失败次数,下行PRB平均利用率,ERAB建立成功数,区域,最大激活用户数,无线掉线率分子,
+		下行PDCP平均速率KBPS,ESRVCC切换请求次数
+	</sql>
+	<select id="selectAllHourTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+		SELECT
+		<include refid="hourField"></include>
+		FROM ${tablename}
+		) A
+		WHERE ROWNUM &lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllAllNetHourTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT
+		<include refid="hourField"></include>
+		FROM ${tablename}
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- DayTopCellworkBase[] selectAllDayTopCell(@Param("tablename") String tablename); -->
+	<!-- 查询天级数据TOP小区 -->
+	<select id="selectAllDayTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+		SELECT
+			<include refid="DayField"></include>
+		FROM ${tablename}
+		) A
+		WHERE ROWNUM &lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllAllNetDayTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT
+			<include refid="DayField"></include>
+		FROM ${tablename}
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- HourTopCellworkBase[] selectVIPHourTopCell(@Param("tablename")String 
+		tablename); -->
+	<select id="selectVIPHourTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+		SELECT
+		<include refid="hourField"></include>
+		FROM ${tablename} t1 where t1.ENODEBID_CELLID in
+		(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+		) A
+		WHERE ROWNUM
+		&lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllVIPHourTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT
+		<include refid="hourField"></include>
+		FROM ${tablename} t1 where t1.ENODEBID_CELLID in
+		(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- DayTopCellworkBase[] selectVIPDayTopCell(@Param("tablename") String tablename); -->
+	<!-- 查询天级 vip的前20条信息 -->
+	<select id="selectVIPDayTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+		SELECT
+		<include refid="DayField"></include>
+		FROM ${tablename} t1 where t1.ENODEBID_CELLID in
+		(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+		) A
+		WHERE ROWNUM
+		&lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllVIPDayTopCell" parameterType="String"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT
+		<include refid="DayField"></include>
+		FROM ${tablename} t1 where t1.ENODEBID_CELLID in
+		(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- HourTopCellworkBase[] selectPointKeyHourTopCell(@Param("cellInfoTablename") 
+		String cellInfoTablename, @Param("regTablename") String regTablename); -->
+	<select id="selectPointKeyHourTopCell"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+			SELECT
+				E.*
+			FROM ${cellInfoTablename} E,${regTablename} D WHERE E.ENODEBID_CELLID
+			= D.ENODEBID_CELLID
+		) A
+		WHERE ROWNUM &lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllPointKeyHourTopCell"
+		resultType="cn.huahai.tel.bean.HourTopCellworkBase">
+		SELECT
+			E.*
+		FROM ${cellInfoTablename} E,${regTablename} D WHERE E.ENODEBID_CELLID
+		= D.ENODEBID_CELLID
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- DayTopCellworkBase[] selectPointKeyDayTopCell(@Param("cellInfoTablename") String cellInfoTablename,
+			@Param("regTablename") String regTablename); -->
+	<!-- 查询重点小区的天级数据的前20条 -->
+	<select id="selectPointKeyDayTopCell"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+			SELECT
+				E.*
+			FROM ${cellInfoTablename} E,${regTablename} D WHERE E.ENODEBID_CELLID
+			= D.ENODEBID_CELLID
+		) A
+		WHERE ROWNUM &lt;= 20
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllPointKeyDayTopCell"
+		resultType="cn.huahai.tel.bean.DayTopCellworkBase">
+		SELECT
+			E.*
+		FROM ${cellInfoTablename} E,${regTablename} D WHERE E.ENODEBID_CELLID
+		= D.ENODEBID_CELLID
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<select id="selectAllSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	
+		select 
+			DAY1,${field},VIP,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB ,
+			 round( ((select sum(流量GB) from ${tableName}  where ${tableName}.VIP = A.VIP and 流量GB !=0) / (select sum(流量GB) from ${stableName}  where ${stableName}.VIP = A.VIP and 流量GB !=0)),3) as 增幅,
+    
+			(select count(最大激活用户数) from  ${tableName} where 最大激活用户数>200 and ${tableName}.VIP = A.VIP) AS 高负荷总个数,
+			max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tableName} where 拥塞次数>0 and ${tableName}.VIP = A.VIP) AS 拥塞小区数
+       	
+       
+       from ${tableName} A GROUP BY DAY1,${field},VIP having VIP is not null 
+      
+       
+		
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.KeyPointCellMapper">
+	<!-- 根据tag -->
+	<!-- String selectTablenameByTagname(@Param("tagname") String tagname); -->
+	<select id="selectTablenameByTagname" parameterType="String" resultType="String">
+		select tablename from YM_BZH_MAPPRING where TAGNAME='${tagname}'
+	</select>
+	
+	<select id="selectDataByECellId" parameterType="java.util.List" resultType="String">
+		select ENODEBID_CELLID from ${pinyintagName}
+	
+	</select>
+	
+	<!-- 
+		void insertKeyPointCell(
+		@Param("tablename") String tablename,
+		@Param("tagname") String tagname); 
+	-->
+	
+	<update id="deleteData" parameterType="String">
+		DELETE FROM ${pinyintagName} 
+	</update>
+	
+	<insert id="insertKeyPointCell" parameterType="String">
+		insert into 
+		YM_BZH_MAPPRING
+		( tablename,tagname)
+		values 
+		('${tablename}','${tagname}')
+	</insert>
+	<!-- void deleteMapping(@Param("tagname") String tagname);-->
+	<update id="deleteMapping" parameterType="String">
+		DELETE FROM YM_BZH_MAPPRING t WHERE t.tagname = '${tagname}'
+	</update>
+	<!-- void createKeyPointCell(@Param("tablename") String tablename); -->
+	<update id="createKeyPointCell"  parameterType="String">
+		CREATE TABLE ${tablename}
+		(
+		  eNodebid_Cellid VARCHAR2(32)
+		)
+	</update>
+	
+	
+	<!-- void deletekeypointTable(@Param("tablename") String tablename); -->
+	<update id="deletekeypointTable" parameterType="String">
+		drop table ${tablename}
+	</update>
+	<sql id="update">
+	insert into ${pinyintagName}  
+	</sql>
+	<insert id="updateCellMapping" parameterType="java.util.List">
+	insert into ${pinyintagName}  (eNodebid_Cellid) 
+	
+	    <foreach collection="cellList" item="item" separator="UNION ALL" >  
+	       SELECT
+			#{item}
+			FROM dual 
+	    </foreach> 
+	   
+	</insert>
+	
+	<!--void insertKeyPointCellName(@Param("tablename") String tablename,
+			@Param("cellList") List<String> cellList);  -->
+	<insert id="insertKeyPointCellName"  parameterType="java.util.List">
+		 insert into ${tablename}  (eNodebid_Cellid) 
+	    <foreach collection="cellList" item="item" separator="UNION ALL" >  
+	        SELECT
+			#{item}
+			FROM dual  
+	    </foreach> 
+	</insert>
+	<!-- Integer selectTagName(@Param("tagname") String tagname); -->
+	<select id="selectTagName" parameterType="String" resultType="Integer">
+		<!-- SELECT count(*) FROM YM_BZH_MAPPRING WHERE TABLENAME='$(tagname)' -->
+		SELECT count(*) FROM YM_BZH_MAPPRING WHERE TABLENAME='${tagname}'
+	</select>
+	<!-- String[] selectAllMapping(); -->
+	<!-- 查询所有的组名称  -->
+	<select id="selectAllMapping" resultType="java.lang.String">
+		SELECT tagname FROM YM_BZH_MAPPRING
+	</select>
+	<!-- TopCellworkBase[] selectKeyPontCellInfo(
+			@Param("cellInfoTablename") String cellInfoTablename,
+			@Param("regTablename") String regTablename); -->
+	<!-- 查询符合范围的top信息 -->
+	<select id="selectKeyPontCellInfo" parameterType="String" resultType="cn.huahai.tel.bean.TopCellworkBase">
+		SELECT * FROM
+		(
+		SELECT A.*, ROWNUM RN
+		FROM (
+			SELECT
+				E.*
+			FROM ${cellInfoTablename} E,${regTablename} D WHERE E.ENODEBID_CELLID
+			= D.ENODEBID_CELLID
+		) A
+		WHERE ROWNUM &lt;= 100
+		)
+		WHERE RN &gt;= 0
+		ORDER BY
+		RRC加ERAB失败总次数 desc
+	</select>
+	<!-- TopCellworkBase[] selectVIPCellInfo(@Param("tablename") String tablename); -->
+	<!-- 查询Vip小区 -->
+	<select id="selectVIPCellInfo" parameterType="String" resultType="cn.huahai.tel.bean.TopCellworkBase">
+		<!-- select * from ym_sys_cell where vip = 'VIP' -->
+		<!-- select * from ${tablename} t1 where t1.ENODEBID_CELLID in 
+		(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+		ORDER BY RRC加ERAB失败总次数 desc -->
+		<!-- 只查询前28条 -->
+		SELECT * FROM   
+			(  
+			SELECT A.*, ROWNUM RN   
+			FROM (
+				select * from ${tablename} t1 where t1.ENODEBID_CELLID in 
+				(select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP')
+				) A   
+				WHERE ROWNUM &lt;= 28 
+			)  
+			WHERE RN &gt;= 0
+			ORDER BY RRC加ERAB失败总次数 desc
+	</select>
+	
+	<sql id="Summary">
+		select 
+			DAY1,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 全网总流量,round(avg(流量GB),2) AS 平均每个小区的流量,max(最大激活用户数) AS 最大激活用户数,
+			sum(VOLTE话务量) AS 总VOLTE话务量,(select count(拥塞次数) from  ${tablename} where 拥塞次数>0) AS 拥塞小区数
+		
+	</sql>
+	<sql id="Sum">
+		select 
+			DAY1,HM,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 全网总流量,max(最大激活用户数) AS 最大激活用户数,
+			sum(VOLTE话务量) AS 总VOLTE话务量,(select count(拥塞次数) from  ${tablename} where 拥塞次数>0) AS 拥塞小区数
+		
+	</sql>
+	<select id="selectVipSumInfo">
+		<include refid="Summary"></include>
+		from ${tablename}  GROUP BY DAY1
+	</select>
+	<!-- 汇总分钟级VIP小区 -->
+	<select id="selectVIPCellSumInfo" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	
+		select 
+			DAY1,HM,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tablename} where 拥塞次数>0) AS 拥塞小区数	
+       
+       from ${tablename} where VIP = 'VIP' GROUP BY DAY1,HM
+	</select>
+	<sql id="emphasis">
+		round( ((select sum(流量GB) from ${cellInfoTablename}  where ${cellInfoTablename}.VIP = A.VIP and ${cellInfoTablename}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM YM_BZH_XIAOYUAN)) / 
+			 (select sum(流量GB) from ${scellInfoTablename}  where ${scellInfoTablename}.VIP = A.VIP and ${scellInfoTablename}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM YM_BZH_XIAOYUAN))),3) as 增幅,
+    
+			(select count(最大激活用户数) from  ${cellInfoTablename} where 最大激活用户数>200 and ${cellInfoTablename}.VIP = A.VIP and ${cellInfoTablename}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM YM_BZH_XIAOYUAN)) AS 高负荷总个数,
+			max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${cellInfoTablename} where 拥塞次数>0 and ${cellInfoTablename}.VIP = A.VIP and ${cellInfoTablename}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM YM_BZH_XIAOYUAN)) AS 拥塞小区数
+       
+	</sql>
+	<!-- 统计 分钟级重点小区 -->
+	<select id="selectKeyPointSumCellInfo" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		
+		select 
+			DAY1,${field},VIP,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,
+			 <include refid="emphasis"></include>
+       from ${cellInfoTablename} A where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM YM_BZH_XIAOYUAN) GROUP BY DAY1,${field},VIP  having VIP is not null 
+	</select>
+	<!-- 统计小时级的全部小区 -->
+	<select id="selectAllHourSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,HH,VIP,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,
+			 round(  ((select sum(流量GB) from ${tableName}  where ${tableName}.VIP = A.VIP and 流量GB != 0) / (select sum(流量GB) from ${stableName}  where ${stableName}.VIP = A.VIP and 流量GB != 0)),3) as 增幅,
+    
+			(select count(最大激活用户数) from  ${tableName} where 最大激活用户数>200 and ${tableName}.VIP = A.VIP) AS 高负荷总个数,
+			max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tableName} where 拥塞次数>0 and ${tableName}.VIP = A.VIP) AS 拥塞小区数
+       	
+       
+       from ${tableName} A GROUP BY DAY1,HH,VIP having VIP is not null 
+	</select>
+	<!-- 统计小时级的VIP小区 -->
+	<select id="selectVIPHourSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,HH,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tableName} where 拥塞次数>0) AS 拥塞小区数	
+       
+       from ${tableName} where VIP = 'VIP' GROUP BY DAY1,HH
+	</select>
+	<!-- 统计小时级的重点小区 -->
+	<select id="selectKeyPointHourSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,HH,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${cellInfoTablename} where 拥塞次数>0) AS 拥塞小区数	
+       
+       from ${cellInfoTablename} where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename}) GROUP BY DAY1,HH
+	</select>
+	<!-- 统计天级全部小区 -->
+	<select id="selectAllDaySumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,VIP,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,
+			 round(  ((select sum(流量GB) from ${tableName}  where ${tableName}.VIP = A.VIP and 流量GB != 0) / (select sum(流量GB) from ${stableName}  where ${stableName}.VIP = A.VIP and 流量GB != 0)),3) as 增幅,
+    
+			(select count(最大激活用户数) from  ${tableName} where 最大激活用户数>200 and ${tableName}.VIP = A.VIP) AS 高负荷总个数,
+			max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tableName} where 拥塞次数>0 and ${tableName}.VIP = A.VIP) AS 拥塞小区数
+       	
+       
+       from ${tableName} A where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${stableName}) GROUP BY DAY1,VIP having VIP is not null 
+	</select>
+	<!-- 统计天级VIP小区 -->
+	<select id="selectVIPDaySumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	
+		select 
+			DAY1,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,max(最大激活用户数) AS 最大激活用户数,
+			(select count(拥塞次数) from  ${tableName} where 拥塞次数>0) AS 拥塞小区数	
+       
+       from ${tableName} where VIP = 'VIP'  GROUP BY DAY1
+	</select>
+	<!-- 统计天级重点小区 -->
+	<select id="selectPointKeyDaySumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,VIP,COUNT(ECELLNAME_CN) AS 总基站数 ,sum(流量GB) AS 流量GB,
+			<include refid="emphasis"></include>
+       from ${cellInfoTablename} A where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename}) GROUP BY DAY1,VIP having VIP is not null
+	</select>
+	<!-- 新重点小区 -->
+	<sql id="NeweMphasis">
+		(select count(流量GB) from ${tableName} where 流量GB !=0 and ${tableName}.区域 = A.区域 AND ${tableName}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename})) AS 有业务小区数,
+	(select count(最大激活用户数) from ${tableName} where 最大激活用户数 >200 and ${tableName}.区域 = A.区域 AND ${tableName}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename})) AS 高用户小区数,
+	
+	(select count(ENODEBID_CELLID) from YM_SYS_OCELL where ENODEBID_CELLID NOT IN (select ENODEBID_CELLID from ${tableName}) AND YM_SYS_OCELL.区域 = A.区域 AND YM_SYS_OCELL.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename})) AS 无服务小区数,
+	(select count(流量GB) from ${tableName} where 流量GB = 0 and ${tableName}.区域 = A.区域 AND ${tableName}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename})) AS 有业务小区数,
+	(select count(上行干扰) from ${tableName} where 上行干扰 !=0 and 上行干扰> -105 and ${tableName}.区域 = A.区域 AND ${tableName}.ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename})) AS 干扰小区数,
+	(select count(区域) from YM_SYS_LINKBAD where  YM_SYS_LINKBAD.区域 = A.区域) AS 断链小区数
+	</sql>
+	<!-- 新统计15分钟级全部小区&gt; -->
+	<sql id="NewSumCell">
+		(select count(流量GB) from ${tableName} where 流量GB !=0 and ${tableName}.区域 = A.区域 ) AS 有业务小区数,
+	(select count(最大激活用户数) from ${tableName} where 最大激活用户数 >200 and ${tableName}.区域 = A.区域 ) AS 高用户小区数,
+	
+	(select count(ENODEBID_CELLID) from YM_SYS_OCELL where ENODEBID_CELLID NOT IN (select ENODEBID_CELLID from ${tableName}) AND YM_SYS_OCELL.区域 = A.区域 ) AS 无服务小区数,
+	(select count(流量GB) from ${tableName} where 流量GB = 0 and ${tableName}.区域 = A.区域 ) AS 有业务小区数,
+	(select count(上行干扰) from ${tableName} where 上行干扰 !=0 and 上行干扰> -105 and ${tableName}.区域 = A.区域 ) AS 干扰小区数,
+	(select count(区域) from YM_SYS_LINKBAD where  YM_SYS_LINKBAD.区域 = A.区域) AS 断链小区数
+	</sql>
+	<!-- 新15分钟级汇总全部小区 -->
+	<select id="selectNewAllSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select 
+		DAY1,${field},区域,
+		<include refid="NewSumCell"></include>
+	from ${tableName} A  group by DAY1,${field},区域 having 区域 is not null
+	</select>
+	<!-- 新小时级汇总全部小区 -->
+	<select id="selectAllHourNewSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select 
+		DAY1,HH,区域,
+		<include refid="NewSumCell"></include>
+	from ${tableName} A  group by DAY1,HH,区域 having 区域 is not null
+	</select>
+	
+	<select id="selectAllDayNewSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select 
+		DAY1,区域,
+		<include refid="NewSumCell"></include>
+	from ${tableName} A  group by DAY1,区域 having 区域 is not null
+	</select>
+	
+	<select id="selectKeyNewSumCellInfo" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select 
+		DAY1,${field},区域,
+		<include refid="NeweMphasis"></include>
+	from ${tableName} A where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename}) group by DAY1,${field},区域 having 区域 is not null
+	</select>
+	
+	<select id="selectKeyDayNewSumCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select 
+			DAY1,区域,
+			<include refid="NeweMphasis"></include>
+		from ${tableName} A where ENODEBID_CELLID IN (SELECT ENODEBID_CELLID FROM ${regTablename}) group by DAY1,区域 having 区域 is not null
+	</select>
+	<select id="selecttagNameData" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		select A.*,B.ecellname_cn from ${tagName} A left join ${tableName} B on A.ENODEBID_CELLID = B.ENODEBID_CELLID
+		
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

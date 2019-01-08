@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.AllNetworkBaseMapper">
+	<!--公共sql  -->
+	<!-- <sql id="field">
+		day1,${field},无线接通率,无线掉线率,切换成功率 ,流量GB,RRC加ERAB失败总次数,
+		拥塞次数,最大激活用户数,无线掉线率分子,上行干扰,RRC连接建立成功率,
+		ERAB建立成功率,ERAB掉线率,上行流量GB,下行流量GB,上行PRB平均利用率,
+		下行PRB平均利用率,小区可用率,RRC最大连接数,RRC连接总数,
+		eNodeB寻呼数,RRC连接建立成功次数,RRC连接建立失败次数,RRC连接建立请求次数,
+		ERAB建立成功数,ERAB建立失败数,ERAB建立请求数,无线掉线率分母,ERAB掉线次数,
+		ERAB掉线率分母,切换请求次数,切换成功次数,切换失败次数,小区可用率分子,小区可用率分母,
+		上行PDCP平均速率kbps,
+		下行PDCP平均速率kbps,eNB间切换成功次数,eNB间切换数,eNB间切换成功率,eNB内切换成功次数,
+		eNB内切换数,eNB内切换成功率,
+		用户面PDCP流量
+	</sql> -->
+	<sql id="field">
+		DAY1,${field},无线接通率,无线掉线率,切换成功率,流量GB,RRC加ERAB失败总次数,
+		拥塞次数,平均激活用户数,最大激活用户数,无线掉线率分子,上行干扰,RRC连接建立成功率,
+		ERAB建立成功率,ERAB掉线率,上行流量GB,下行流量GB,上行PRB平均利用率,下行PRB平均利用率,
+		小区可用率,RRC最大连接数,RRC连接总数,ENODEB寻呼数,RRC连接建立请求次数,
+		RRC连接建立成功次数,RRC连接建立失败次数,ERAB建立请求数,ERAB建立成功数,ERAB建立失败数,
+		无线掉线率分母,ERAB掉线次数,ERAB掉线率分母,切换请求次数,切换成功次数,切换失败次数,
+		小区可用率分子,小区可用率分母,上行PDCP平均速率KBPS,下行PDCP平均速率KBPS,
+		ENB间切换成功次数,ENB间切换数,ENB间切换成功率,ENB内切换成功次数,ENB内切换数,ENB内切换成功率,
+		用户面PDCP流量,VOLTE接通率,VOLTE话务量,VOLTE掉话次数,VOLTE掉话分母,VOLTE掉话率,
+		ESRVCC切换成功率,ESRVCC切换请求次数,ESRVCC切换成功次数,ESRVCC切换失败次数,ESRVCC切换准备次数,
+		ESRVCC切换失败总次数,VOLTE接入请求次数,VOLTE接入成功次数,VOLTE接入失败次数
+	</sql>
+	<!-- 激活用户计数,配置SCell的UE数,激活SCell的UE数,SCell配置请求数,小区上行PDCP丢包率,小区下行PDCP丢包率,CA能力UE数,平均激活用户数,SCell配置成功数,SCell数据量,双流占比,双流占比分子,双流占比分母, -->
+	<!-- AllNetworkBase[] selectAllNetworkbase(String tablename); -->
+	<select id="selectAllNetworkbase" parameterType="java.lang.String" resultType="cn.huahai.tel.bean.AllNetworkBase" >
+		
+		
+		   SELECT 
+			<include refid="field"></include>
+		FROM (select * from  YM_AQ_ALLK  order by DAY1 DESC ,HM DESC) A where rownum BETWEEN 1 and (${number})
+		
+		 
+	</select>
+	<select id="selectAllNetworkbases" parameterType="java.lang.String" resultType="cn.huahai.tel.bean.AllNetworkBase" >
+		
+		
+		   SELECT 
+			<include refid="field"></include>
+		FROM (select * from  YM_AQ_ALLK  order by DAY1 DESC ,HM DESC) A where rownum BETWEEN 1 and 500
+		
+		 
+	</select>
+	<!-- 查询所有表名 -->
+	<!--String[] selectAllTableName();  -->
+	<select id="selectAllTableName" resultType="String">
+		select table_name from user_tables
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

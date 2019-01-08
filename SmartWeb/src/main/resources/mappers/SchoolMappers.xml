@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.SchoolMapper">
+				
+	<select id="selectDataByMaxAc" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName} where 最大激活用户数 = ${datas} and VIP = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	
+	<select id="selectDataByVip" parameterType="String" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName} where VIP = '${datas}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<select id="selectDataByNotCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName} where 拥塞次数  &gt; 0 and VIP = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	
+	<select id="selectDataByflow" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select *from ${tableName}  where 流量GB &gt; 0 and VIP = '${site}' 
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	
+	</select>
+	
+	<select id="selectDataByCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName}  where ECELLNAME_CN is not null and VIP = '${site}'
+		<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	
+	<select id="selectDataByLoadCell"  resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName}  where 最大激活用户数  &gt; 200  and VIP = '${site}' 
+		
+		
+	<if test="tagName !='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	
+	</select>
+	
+	<select id="selectDataByArea" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from ${tableName} where 区域 = '${site}'	
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<select id="selectDataByServiceCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName} WHERE 流量GB != 0 AND 区域 = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	
+	</select>
+	
+	<select id="selectDataByHighCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName} WHERE 最大激活用户数  &gt; 200 AND 区域 = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	
+	<select id="selectDataByNotGbCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from YM_SYS_OCELL where ENODEBID_CELLID NOT IN (select ENODEBID_CELLID from ${tableName}) AND 区域 = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	
+	<select id="selectDataByDisturbCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName} WHERE 上行干扰 !=0 and 上行干扰 &gt; -105 AND 区域 = '${site}'
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+<!-- !!!!!!!!!!!!!!!!!!以下是汇总统计的汇总部分!!!!!!!!!!!!!!!!! -->	
+	<!-- 所有区域 -->
+	<select id="selectDataAllCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName}  where 区域 is not null  
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<!-- 有业务小区 -->
+	<select id="selectDataAllServiceCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName}  WHERE 流量GB != 0 and 区域 is not null
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<!-- 高用户小区 -->
+	<select id="selectDataAllHightCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	SELECT * FROM ${tableName}  where 最大激活用户数  &gt; 200 and 区域 is not null
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<!-- 无服务小区 -->
+	<select id="selectDataAllNotGbCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+	select * from YM_SYS_OCELL where ENODEBID_CELLID NOT IN (select ENODEBID_CELLID from ${tableName}) and 区域 is not null
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<!-- 干扰小区 -->
+	<select id="selectDataAllDisturbCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		SELECT * FROM ${tableName}  where 上行干扰 !=0 and 上行干扰 &gt; -105 and 区域 is not null
+	<if test="tagName!='YM_BZH_all'">
+		and ENODEBID_CELLID in (select ENODEBID_CELLID from ${tagName})
+	</if>
+	</select>
+	<!-- 断链小区数 -->
+	<select id="selectDataByLinkCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		SELECT * FROM YM_SYS_LINKBAD  where 区域 = '${site}' 
+	
+	</select>
+	
+	<!-- 断链小区数汇总 -->
+	<select id="selectDataLinkCell" resultType="cn.huahai.tel.bean.DaySummaryBase">
+		SELECT * FROM YM_SYS_LINKBAD  where 区域 is not null
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

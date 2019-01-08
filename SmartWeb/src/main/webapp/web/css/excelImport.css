@@ -1,0 +1,78 @@
+.setPage {
+	margin-top: 20px;
+	height: 100%;
+}
+.upSubmit {
+	margin-top: 20px;
+}
+.set_pageMain {
+	padding: 10px;
+	margin: 0% 3%;
+	background: white;
+	min-height: 600px;
+}
+/*input file 样式*/
+.upload {
+	padding: 6px 10px;
+	height: 30px;
+	line-height: 20px;
+	position: relative;
+	top:10px;
+	border: 1px solid #999;
+	text-decoration: none;
+	color: white;
+	background-color: #5bc0de;
+    border-color: #46b8da;
+    border-radius: 4px;
+}
+.change {
+	position: absolute;
+	overflow: hidden;
+	right: 0;
+	top: 0;
+	opacity: 0;
+}
+.err{
+	background: red;
+}
+/*表格外层样式*/
+.excelTableContainer{
+	height: 580px;
+	max-width:800px;
+	float:right;
+	overflow:auto;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+.excelResult{
+	margin-top: 30px;
+}
+.excelTableContainer table{
+	max-width: 100%;
+}
+.excelTableContainer table thead{
+	white-space: nowrap;
+}
+.submit{
+	margin-top: 20px;
+}
+.tagName{
+	display: block;
+	margin-top: 33px;
+}
+#mappingTable{
+	margin-top: 20px;
+}
+.criticalAllNetTable{
+	padding-top: 10px;
+}
+.criticalTopCellTable{
+	padding-top: 10px;
+}
+#topCellValueTable button{
+	margin-right: 20px;
+}
+#jsonValue{
+	width:80%;
+	display: inline-block;
+}

@@ -1,0 +1,193 @@
+.rowNumb1 > div{
+	height: 250px;
+}
+.rowNumb2 > div{
+	height: 215px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+.rowNumb3 > div{
+	height: 615px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+.rowNumb4 > div{
+	height: 415px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+.samllSize{
+	font-size: 12px;
+	white-space:nowrap; 
+}
+.excelIcon{
+	width: 15px;
+	margin-right: 3px;
+}
+/*澧炲姞鏄剧ず鍖哄煙瀹藉害*/
+@media (min-width: 992px)
+.container {
+    width: 1300px;
+}
+/*娣诲姞鍒嗛殧*/
+.magin-bottom{
+	margin-bottom: 10px;
+}
+/*涓�绾у鑸�変腑鏍峰紡*/
+.navActive{
+	background: #402d5c;
+}
+/*鏄剧ず鏇村琛ㄦ牸*/
+.showToggle{
+	height: 46px;
+}
+.showmoreIcon,.showmoreText{
+	float: right;
+}
+.showmoreIcon{
+	margin: 3px 6px;
+}
+.showBtn{
+	height: 32px;
+	margin: 6px 0;
+	float: right;
+	background: #fcfcfc;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+}
+.showBtn:hover{
+	cursor:pointer;
+	background: #bbb;
+}
+.hideBlock{
+	overflow: hidden;
+	height: 0;
+}
+.hideBlock{
+	padding: 0 1px;
+}
+/*鍥捐〃鏍峰紡*/
+.table1 ,.table2,.table3,.table4,.table5
+,.table6,.table7,.table8{
+	background: #fafafa;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 15px;
+	box-shadow: 3px 3px 3px #bbb;
+}
+.table1 ,.table2,.table5
+,.table6,.table7,.table8{
+	height: calc(100% - 6px);
+}
+.table1:hover{
+	background: #fff;
+}
+.table2:hover{
+	background: #fff;
+}
+.table3:hover{
+	background: #fff;
+}
+.table4:hover{
+	background: #fff;
+}
+.table5:hover{
+	background: #fff;
+}
+.table6:hover{
+	background: #fff;
+}
+.table7:hover{
+	background: #fff;
+}
+.table8:hover{
+	background: #fff;
+}
+/*logo 鏍峰紡*/
+.logo{
+	float: left;
+    width: 86px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 72px;
+}
+body{
+	padding-top: 50px;
+}
+.main{
+	display: flex;
+}
+.threeNav{
+	width: 10%;
+	flex: 2;
+	margin-right: 54px;
+	margin-top: 50px;
+}
+#wrapper{
+	flex: 12;
+}
+.nav-tabs > li > a{
+	border-radius: 0;
+	border: 1px solid #ddd;
+}
+/*涓夌骇瀵艰埅鍥哄畾鏍峰紡*/
+#main-nav{
+	position:fixed;
+	top: 100px;
+	width: 255px;
+	height:calc(100% - 100px);
+	overflow-y: scroll;
+    overflow-x: scroll;
+}
+.userBlock{
+	float: right;
+	margin-right: 60px;
+	color: #eee;
+}
+.userBlock>p{
+	line-height: 50px;
+	margin: 0;
+	cursor:pointer;
+}
+/*澧炲姞涓夌骇瀵艰埅涓嬭竟璺�  */
+.twoNav{
+	margin-bottom: 10px;
+}
+/* 琛ㄦ牸鏍囬鏍峰紡 */
+.tableTitle{
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+.clearFloat:after{
+     content:".";
+     clear:both;
+     display:block;
+     height:0;
+     overflow:hidden;
+     visibility:hidden;
+ }
+ .clearFloat{
+	 display:inline-block; 
+	*display:inline; 
+	*zoom:1;
+	white-space: nowrap;
+ }
+/*澶撮儴涓夌骇瀵艰埅 闂磋窛*/
+ .twoNav>ul>li{
+	margin-right: 20px;
+}
+
+
+/*选择范围 按钮样式*/
+.selectRange{
+	float: right;
+	margin-right: 20px;
+	margin-top: 5px;
+}
+
+
+
+
+

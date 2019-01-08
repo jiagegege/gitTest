@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.StartupListenerMapper">
+	<!-- YM_BZH_MAPPRING -->
+	<!-- /**
+	 * 创建YM_BZH_MAPPRING表；
+	 */
+	void createYM_BZH_MAPPRING ();
+	/**
+	 * 创建VISITCOUNT表；
+	 */
+	void createVISITCOUNT();
+	/**
+	 * 创建VISIT_IP_COUNT表；
+	 */
+	void createVISIT_IP_COUNT (); -->
+	<update id="createYM_BZH_MAPPRING">
+		CREATE TABLE YM_BZH_MAPPRING
+		(
+		  TABLENAME VARCHAR2(132) NOT NULL 
+		, TAGNAME VARCHAR2(132) NOT NULL 
+		)
+	</update>
+	<update id="createVISITCOUNT">
+		CREATE TABLE VISITCOUNT 
+		(
+		  PATH VARCHAR2(120) NOT NULL 
+		, COUNT NUMBER NOT NULL 
+		)
+	</update>
+	<update id="createVISIT_IP_COUNT">
+		CREATE TABLE VISIT_IP_COUNT 
+		(
+		  IP VARCHAR2(120) NOT NULL 
+		, VISIT_DATE VARCHAR2(20) NOT NULL 
+		)
+	</update>
+	<!-- void createALLNET_JSONVALUE();
+	/**
+	 * 创建TopCELL_JSONVALUE表
+	 */
+	void createTopCELL_JSONVALUE(); -->
+	<update id="createALLNET_JSONVALUE">
+		CREATE TABLE ALLNET_JSONVALUE 
+		(
+		  username VARCHAR2(120) NOT NULL 
+		, jsonvalue VARCHAR2(1200) NOT NULL 
+		)
+	</update>
+	
+	<update id="createTopCELL_JSONVALUE">
+		CREATE TABLE TopCELL_JSONVALUE 
+		(
+		  username VARCHAR2(120) NOT NULL 
+		, jsonvalue VARCHAR2(1200) NOT NULL 
+		)
+	</update>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

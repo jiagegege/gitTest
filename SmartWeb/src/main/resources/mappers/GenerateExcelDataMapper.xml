@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.huahai.tel.mapper.GenerateExcelDataMapper">
+	<!--TopCellworkBase[] generateCellDataExcel(@Param("resourceTableName") 
+		String resourceTableName, @Param("conditionTableName") String conditionTableName); -->
+	<!--依据条件删选cell里面的数据 -->
+	<select id="generateCellDataExcel" parameterType="String"
+		resultType="cn.huahai.tel.bean.CellInfoBase">
+		select * from ${resourceTableName} t1,
+		${conditionTableName} t2 where t1.ENODEBID_CELLID = t2.ENODEBID_CELLID
+	</select>
+	<!-- TopCellworkBase[] generateVIPCellDataExcel(@Param("resourceTableName") 
+		String resourceTableName); -->
+	<!-- 查询vip小区数据 -->
+	<select id="generateVIPCellDataExcel" parameterType="String"
+		resultType="cn.huahai.tel.bean.CellInfoBase">
+		select * from ${resourceTableName} t1 where
+		t1.ENODEBID_CELLID in
+		(select ENODEBID_CELLID from ym_sys_cell where
+		vip = 'VIP')
+	</select>
+	<!-- 数据测试 -->
+	<!-- List<String> getMapList(@Param("tablename") String tablename); -->
+	<select id="getMapList" resultType="String" >
+		select column_name, data_type
+		from all_tab_columns where TABLE_NAME ='${tablename}'
+	</select>
+	<sql id="prefixSql">
+		Select Day1,hm
+		,Round(Decode(sum(RRC连接建立请求次数)*sum(ERAB建立请求数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2)
+		as 无线接通率
+		,Round(Decode(sum(无线掉线率分母),0,0,100*sum(无线掉线率分子)/sum(无线掉线率分母)),2) as
+		无线掉线率
+		,Round(Decode(sum(切换请求次数),0,0,100*sum(切换成功次数)/sum(切换请求次数)),2) as 切换成功率
+		,Round(sum(用户面PDCP流量)/(1024*1024*1024),2) as 流量GB
+		,sum(RRC加ERAB失败总次数) as RRC加ERAB失败总次数
+		,sum(拥塞次数) as 拥塞次数
+		,Round(avg(平均激活用户数),2) as 平均激活用户数
+		,max(最大激活用户数) as 最大激活用户数
+		,sum(无线掉线率分子) as 无线掉线率分子
+		,Round(avg(上行干扰),2) as 上行干扰
+		,Round(Decode(sum(RRC连接建立请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)),2)
+		as RRC连接建立成功率
+		,Round(Decode(sum(ERAB建立请求数),0,0,100*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2)
+		as ERAB建立成功率
+		,Round(Decode(sum(ERAB掉线率分母),0,0,sum(ERAB掉线次数)/sum(ERAB掉线率分母)),2) as
+		ERAB掉线率
+		,Round(sum(上行流量GB),2) as 上行流量GB
+		,Round(sum(下行流量GB),2) as 下行流量GB
+		,Round(avg(上行PRB平均利用率),2) as 上行PRB平均利用率
+		,Round(avg(下行PRB平均利用率),2) as 下行PRB平均利用率
+		,Round(Decode(sum(小区可用率分母),0,0,100*sum(小区可用率分子)/sum(小区可用率分母)),2) as
+		小区可用率
+		,max(RRC最大连接数) as RRC最大连接数
+		,sum(RRC连接总数) as RRC连接总数
+		,sum(ENODEB寻呼数) as ENODEB寻呼数
+		,sum(RRC连接建立请求次数) as RRC连接建立请求次数
+		,sum(RRC连接建立成功次数) as RRC连接建立成功次数
+		,sum(RRC连接建立失败次数) as RRC连接建立失败次数
+		,sum(ERAB建立请求数) as ERAB建立请求数
+		,sum(ERAB建立成功数) as ERAB建立成功数
+		,sum(ERAB建立失败数) as ERAB建立失败数
+		,sum(无线掉线率分母) as 无线掉线率分母
+		,sum(ERAB掉线次数) as ERAB掉线次数
+		,sum(ERAB掉线率分母) as ERAB掉线率分母
+		,sum(切换请求次数) as 切换请求次数
+		,sum(切换成功次数) as 切换成功次数
+		,sum(切换失败次数) as 切换失败次数
+		,sum(小区可用率分子) as 小区可用率分子
+		,sum(小区可用率分母) as 小区可用率分母
+		,sum(上行PDCP平均速率kbps) as 上行PDCP平均速率kbps
+		,sum(下行PDCP平均速率KBPS) as 下行PDCP平均速率KBPS
+		,sum(ENB间切换成功次数) as ENB间切换成功次数
+		,sum(ENB间切换数) as ENB间切换数
+		,Round(Decode(sum(ENB间切换数),0,0,100*sum(ENB间切换成功次数)/sum(ENB间切换数)),2) AS
+		ENB间切换成功率
+		,sum(ENB内切换成功次数) as ENB内切换成功次数
+		,sum(ENB内切换数) as ENB内切换数
+		,Round(Decode(sum(ENB内切换数),0,0,100*sum(ENB内切换成功次数)/sum(ENB内切换数)),2) as
+		ENB内切换成功率
+		,sum(用户面PDCP流量) as 用户面PDCP流量
+		,Round(Decode(sum(RRC连接建立请求次数)*sum(VOLTE接入请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(VOLTE接入成功次数)/sum(VOLTE接入请求次数)),2)
+		as VOLTE接通率
+		,sum(VOLTE话务量) as VOLTE话务量
+		,sum(VOLTE掉话次数) as VOLTE掉话次数
+		,sum(VOLTE掉话分母) as VOLTE掉话分母
+		,Round(Decode(sum(VOLTE掉话分母),0,0,100*sum(VOLTE掉话次数)/sum(VOLTE掉话分母)),2)
+		as VOLTE掉话率
+		,sum(ESRVCC切换请求次数) as ESRVCC切换请求次数
+		,sum(ESRVCC切换成功次数) as ESRVCC切换成功次数
+		,sum(ESRVCC切换失败次数) as ESRVCC切换失败次数
+		,Round(Decode(sum(ESRVCC切换请求次数),0,0,100*sum(ESRVCC切换成功次数)/sum(ESRVCC切换请求次数)),2)
+		as ESRVCC切换成功率
+		,sum(esrvcc切换准备次数) as esrvcc切换准备次数
+		,sum(ESRVCC切换失败总次数) as ESRVCC切换失败总次数
+		,sum(VOLTE接入请求次数) as VOLTE接入请求次数
+		,sum(VOLTE接入成功次数) as VOLTE接入成功次数
+		,sum(VOLTE接入失败次数) as VOLTE接入失败次数
+		,QUARTER1,SDATETIME
+		from
+	</sql>
+	<sql id = "suffixSql">
+		GROUP BY Day1,hm,QUARTER1,SDATETIME
+	</sql>
+	<!-- AllNetworkBase[] selectVIPAllNetWork(@Param("tablename") String tablename); -->
+	<select id="selectVIPAllNetWork" parameterType="String" resultType="cn.huahai.tel.bean.AllNetworkBase">
+		<include refid="prefixSql"></include> 
+		(select * from ${tablename} t1 where t1.ENODEBID_CELLID
+		in (select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP') ORDER
+		BY RRC加ERAB失败总次数 desc) 
+		<include refid="suffixSql"></include>
+	</select>
+	<!-- AllNetworkBase selectKeyPonitAllNetWork(@Param("resourceTableName") String resourceTableName,
+			@Param("conditionTableName") String conditionTableName); -->
+	<select id="selectKeyPonitAllNetWork" parameterType="String" resultType="cn.huahai.tel.bean.AllNetworkBase">
+		<include refid="prefixSql"></include> 
+		(select * from ${resourceTableName} t1,
+		${conditionTableName} t2 where t1.ENODEBID_CELLID = t2.ENODEBID_CELLID) 
+		<include refid="suffixSql"></include>
+	</select>
+	
+	<!-- 小时级数据 -->
+	<sql id="HourPrefixSql">
+		Select Day1,hh
+			,Round(Decode(sum(RRC连接建立请求次数)*sum(ERAB建立请求数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2) as 无线接通率 
+			,Round(Decode(sum(无线掉线率分母),0,0,100*sum(无线掉线率分子)/sum(无线掉线率分母)),2) as 无线掉线率 
+			,Round(Decode(sum(切换请求次数),0,0,100*sum(切换成功次数)/sum(切换请求次数)),2) as 切换成功率 
+			,Round(sum(用户面PDCP流量)/(1024*1024*1024),2) as 流量GB
+ 			,sum(RRC加ERAB失败总次数) as RRC加ERAB失败总次数 
+			,sum(拥塞次数) as 拥塞次数
+            ,Round(avg(平均激活用户数),2) as 平均激活用户数
+            ,max(最大激活用户数) as 最大激活用户数
+			,sum(无线掉线率分子) as 无线掉线率分子
+			,Round(avg(上行干扰),2) as 上行干扰
+			,Round(Decode(sum(RRC连接建立请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)),2) as RRC连接建立成功率
+			,Round(Decode(sum(ERAB建立请求数),0,0,100*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2) as ERAB建立成功率
+			,Round(Decode(sum(ERAB掉线率分母),0,0,sum(ERAB掉线次数)/sum(ERAB掉线率分母)),2) as ERAB掉线率
+			,Round(sum(上行流量GB),2) as 上行流量GB
+			,Round(sum(下行流量GB),2) as 下行流量GB
+			,Round(avg(上行PRB平均利用率),2) as 上行PRB平均利用率
+			,Round(avg(下行PRB平均利用率),2) as 下行PRB平均利用率
+			,Round(Decode(sum(小区可用率分母),0,0,100*sum(小区可用率分子)/sum(小区可用率分母)),2) as 小区可用率
+			,max(RRC最大连接数) as RRC最大连接数
+			,sum(RRC连接总数) as RRC连接总数
+			,sum(ENODEB寻呼数) as ENODEB寻呼数
+            ,sum(RRC连接建立请求次数) as RRC连接建立请求次数
+			,sum(RRC连接建立成功次数) as RRC连接建立成功次数
+			,sum(RRC连接建立失败次数) as RRC连接建立失败次数
+			,sum(ERAB建立请求数) as ERAB建立请求数
+			,sum(ERAB建立成功数) as ERAB建立成功数
+			,sum(ERAB建立失败数) as ERAB建立失败数
+			,sum(无线掉线率分母) as 无线掉线率分母
+			,sum(ERAB掉线次数) as ERAB掉线次数
+			,sum(ERAB掉线率分母) as ERAB掉线率分母
+			,sum(切换请求次数) as 切换请求次数
+			,sum(切换成功次数) as 切换成功次数
+			,sum(切换失败次数) as 切换失败次数
+			,sum(小区可用率分子) as 小区可用率分子
+			,sum(小区可用率分母) as 小区可用率分母
+			,sum(上行PDCP平均速率kbps) as 上行PDCP平均速率kbps
+			,sum(下行PDCP平均速率KBPS) as 下行PDCP平均速率KBPS
+			,sum(ENB间切换成功次数) as ENB间切换成功次数
+			,sum(ENB间切换数) as ENB间切换数
+			,Round(Decode(sum(ENB间切换数),0,0,100*sum(ENB间切换成功次数)/sum(ENB间切换数)),2) AS ENB间切换成功率
+			,sum(ENB内切换成功次数) as ENB内切换成功次数
+			,sum(ENB内切换数) as ENB内切换数
+			,Round(Decode(sum(ENB内切换数),0,0,100*sum(ENB内切换成功次数)/sum(ENB内切换数)),2) as  ENB内切换成功率
+			,sum(用户面PDCP流量) as 用户面PDCP流量
+            ,Round(Decode(sum(RRC连接建立请求次数)*sum(VOLTE接入请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(VOLTE接入成功次数)/sum(VOLTE接入请求次数)),2) as VOLTE接通率
+            ,sum(VOLTE话务量) as VOLTE话务量
+            ,sum(VOLTE掉话次数) as VOLTE掉话次数
+			,sum(VOLTE掉话分母) as VOLTE掉话分母
+            ,Round(Decode(sum(VOLTE掉话分母),0,0,100*sum(VOLTE掉话次数)/sum(VOLTE掉话分母)),2) as  VOLTE掉话率
+            ,Round(Decode(sum(ESRVCC切换请求次数),0,0,100*sum(ESRVCC切换成功次数)/sum(ESRVCC切换请求次数)),2) as  ESRVCC切换成功率
+            ,sum(ESRVCC切换请求次数) as ESRVCC切换请求次数
+			,sum(ESRVCC切换成功次数) as ESRVCC切换成功次数
+            ,sum(ESRVCC切换失败次数) as ESRVCC切换失败次数
+            ,sum(esrvcc切换准备次数) as esrvcc切换准备次数
+            ,sum(ESRVCC切换失败总次数) as ESRVCC切换失败总次数
+            ,sum(VOLTE接入请求次数) as VOLTE接入请求次数
+            ,sum(VOLTE接入成功次数) as VOLTE接入成功次数
+            ,sum(VOLTE接入失败次数) as VOLTE接入失败次数
+			,Day1 || hh as sdate
+		from
+	</sql>
+	<sql id = "HourSuffixSql">
+		GROUP BY Day1,hh,Day1 || hh
+	</sql>
+	<!-- AllNetworkBase selectVIPHourAllNetWork(@Param("tablename") String tablename); -->
+	<select id="selectVIPHourAllNetWork" resultType="cn.huahai.tel.bean.HourAllNetWorkBase">
+		<include refid="HourPrefixSql"></include> 
+		(select * from ${tablename} t1 where t1.ENODEBID_CELLID
+		in (select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP') ORDER
+		BY RRC加ERAB失败总次数 desc) 
+		<include refid="HourSuffixSql"></include> 
+	</select>
+	<!-- HourAllNetWorkBase selectKeyPonitHourAllNetWork(@Param("resourceTableName") String resourceTableName,
+			@Param("conditionTableName") String conditionTableName); -->
+	<select id="selectKeyPonitHourAllNetWork"  resultType="cn.huahai.tel.bean.HourAllNetWorkBase">
+		<include refid="HourPrefixSql"></include>
+		(select * from ${resourceTableName} t1,
+		${conditionTableName} t2 where t1.ENODEBID_CELLID = t2.ENODEBID_CELLID) 
+		<include refid="HourSuffixSql"></include>
+	</select>
+	<!--	HourAllNetWorkBase selectALLHourAllNetWork(@Param("tablename") String tablename);  -->
+	<select id="selectALLHourAllNetWork"  resultType="cn.huahai.tel.bean.HourAllNetWorkBase">
+		<include refid="HourPrefixSql"></include>
+		(select * from ${tablename} t1
+			ORDER
+		BY RRC加ERAB失败总次数 desc) 
+		<include refid="HourSuffixSql"></include>
+	</select>
+	
+	<!-- 天级数据 -->
+	<sql id="DayPrefixSql">
+		Select Day1
+			,Round(Decode(sum(RRC连接建立请求次数)*sum(ERAB建立请求数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2) as 无线接通率 
+			,Round(Decode(sum(无线掉线率分母),0,0,100*sum(无线掉线率分子)/sum(无线掉线率分母)),2) as 无线掉线率 
+			,Round(Decode(sum(切换请求次数),0,0,100*sum(切换成功次数)/sum(切换请求次数)),2) as 切换成功率 
+			,Round(sum(用户面PDCP流量)/(1024*1024*1024),2) as 流量GB
+ 			,sum(RRC加ERAB失败总次数) as RRC加ERAB失败总次数 
+			,sum(拥塞次数) as 拥塞次数
+ 			
+          		  ,Round(avg(平均激活用户数),2) as 平均激活用户数
+        	    ,max(最大激活用户数) as 最大激活用户数
+			,sum(无线掉线率分子) as 无线掉线率分子
+			,Round(avg(上行干扰),2) as 上行干扰
+			,Round(Decode(sum(RRC连接建立请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)),2) as RRC连接建立成功率
+			,Round(Decode(sum(ERAB建立请求数),0,0,100*sum(ERAB建立成功数)/sum(ERAB建立请求数)),2) as ERAB建立成功率
+			,Round(Decode(sum(ERAB掉线率分母),0,0,sum(ERAB掉线次数)/sum(ERAB掉线率分母)),2) as ERAB掉线率
+			,Round(sum(上行流量GB),2) as 上行流量GB
+			,Round(sum(下行流量GB),2) as 下行流量GB
+			,Round(avg(上行PRB平均利用率),2) as 上行PRB平均利用率
+			,Round(avg(下行PRB平均利用率),2) as 下行PRB平均利用率
+			,Round(Decode(sum(小区可用率分母),0,0,100*sum(小区可用率分子)/sum(小区可用率分母)),2) as 小区可用率
+			,max(RRC最大连接数) as RRC最大连接数
+			,sum(RRC连接总数) as RRC连接总数
+			,sum(ENODEB寻呼数) as ENODEB寻呼数
+            		,sum(RRC连接建立请求次数) as RRC连接建立请求次数
+			,sum(RRC连接建立成功次数) as RRC连接建立成功次数
+			,sum(RRC连接建立失败次数) as RRC连接建立失败次数
+			,sum(ERAB建立请求数) as ERAB建立请求数
+			,sum(ERAB建立成功数) as ERAB建立成功数
+			,sum(ERAB建立失败数) as ERAB建立失败数
+			,sum(无线掉线率分母) as 无线掉线率分母
+			,sum(ERAB掉线次数) as ERAB掉线次数
+			,sum(ERAB掉线率分母) as ERAB掉线率分母
+			,sum(切换请求次数) as 切换请求次数
+			,sum(切换成功次数) as 切换成功次数
+			,sum(切换失败次数) as 切换失败次数
+			,sum(小区可用率分子) as 小区可用率分子
+			,sum(小区可用率分母) as 小区可用率分母
+			,sum(上行PDCP平均速率kbps) as 上行PDCP平均速率kbps
+			,sum(下行PDCP平均速率KBPS) as 下行PDCP平均速率KBPS
+			,sum(ENB间切换成功次数) as ENB间切换成功次数
+			,sum(ENB间切换数) as ENB间切换数
+			,Round(Decode(sum(ENB间切换数),0,0,100*sum(ENB间切换成功次数)/sum(ENB间切换数)),2) AS ENB间切换成功率
+			,sum(ENB内切换成功次数) as ENB内切换成功次数
+			,sum(ENB内切换数) as ENB内切换数
+			,Round(Decode(sum(ENB内切换数),0,0,100*sum(ENB内切换成功次数)/sum(ENB内切换数)),2) as  ENB内切换成功率
+			,sum(用户面PDCP流量) as 用户面PDCP流量
+
+            ,Round(Decode(sum(RRC连接建立请求次数)*sum(VOLTE接入请求次数),0,0,100*sum(RRC连接建立成功次数)/sum(RRC连接建立请求次数)*sum(VOLTE接入成功次数)/sum(VOLTE接入请求次数)),2) as VOLTE接通率
+            ,sum(VOLTE话务量) as VOLTE话务量			
+            ,sum(VOLTE掉话次数) as VOLTE掉话次数
+			,sum(VOLTE掉话分母) as VOLTE掉话分母
+            ,Round(Decode(sum(VOLTE掉话分母),0,0,100*sum(VOLTE掉话次数)/sum(VOLTE掉话分母)),2) as  VOLTE掉话率
+             
+            ,Round(Decode(sum(ESRVCC切换请求次数),0,0,100*sum(ESRVCC切换成功次数)/sum(ESRVCC切换请求次数)),2) as  ESRVCC切换成功率
+            ,sum(ESRVCC切换请求次数) as ESRVCC切换请求次数
+			,sum(ESRVCC切换成功次数) as ESRVCC切换成功次数
+            ,sum(ESRVCC切换失败次数) as ESRVCC切换失败次数
+           ,sum(esrvcc切换准备次数) as esrvcc切换准备次数
+            ,sum(ESRVCC切换失败总次数) as ESRVCC切换失败总次数
+
+            ,sum(VOLTE接入请求次数) as VOLTE接入请求次数
+            ,sum(VOLTE接入成功次数) as VOLTE接入成功次数
+            ,sum(VOLTE接入失败次数) as VOLTE接入失败次数
+           
+            from
+	</sql>
+	<sql id = "DaySuffixSql">
+		GROUP BY Day1
+	</sql>
+	<select id="selectVIPDayAllNetWork" resultType="cn.huahai.tel.bean.DayAllNetworkBase">
+		<include refid="DayPrefixSql"></include> 
+		(select * from ${tablename} t1 where t1.ENODEBID_CELLID
+		in (select ENODEBID_CELLID from ym_sys_cell where vip = 'VIP') ORDER
+		BY RRC加ERAB失败总次数 desc) 
+		<include refid="DaySuffixSql"></include> 
+	</select>
+	<select id="selectKeyPonitDayAllNetWork"  resultType="cn.huahai.tel.bean.DayAllNetworkBase">
+		<include refid="DayPrefixSql"></include>
+		(select * from ${resourceTableName} t1,
+		${conditionTableName} t2 where t1.ENODEBID_CELLID = t2.ENODEBID_CELLID) 
+		<include refid="DaySuffixSql"></include>
+	</select>
+	<select id="selectALLDayAllNetWork"  resultType="cn.huahai.tel.bean.DayAllNetworkBase">
+		<include refid="DayPrefixSql"></include>
+		(select * from ${tablename} t1
+			ORDER
+		BY RRC加ERAB失败总次数 desc) 
+		<include refid="DaySuffixSql"></include>
+	</select>
+	<sql id="UnCellAll">
+	select
+	DAY1,HM,B.ENODEBID_CELLID,B.ECELLNAME_CN,B.ECELLNAME,无线接通率,无线掉线率,切换成功率,流量GB,RRC加ERAB失败总次数,拥塞次数,平均激活用户数,
+最大激活用户数,B.支持最大激活用户数,无线掉线率分子,上行干扰,RRC连接建立成功率,ERAB建立成功率,ERAB掉线率,上行流量GB,下行流量GB,上行PRB平均利用率,
+下行PRB平均利用率,小区可用率,RRC最大连接数,RRC连接总数,ENODEB寻呼数,RRC连接建立请求次数,RRC连接建立成功次数,RRC连接建立失败次数,ERAB建立请求数,
+ERAB建立成功数,ERAB建立失败数,无线掉线率分母,ERAB掉线次数,ERAB掉线率分母,切换请求次数,切换成功次数,切换失败次数,小区可用率分子,小区可用率分母,上行PDCP平均速率KBPS,
+下行PDCP平均速率KBPS,ENB间切换成功次数,ENB间切换数,ENB间切换成功率,ENB内切换成功次数,ENB内切换数,ENB内切换成功率,用户面PDCP流量,VOLTE话务量,VOLTE接通率,
+VOLTE掉话率,VOLTE掉话次数,VOLTE掉话分母,ESRVCC切换成功率,ESRVCC切换请求次数,ESRVCC切换成功次数,ESRVCC切换失败次数,ESRVCC切换准备次数,ESRVCC切换失败总次数,
+VOLTE接入请求次数,VOLTE接入成功次数,VOLTE接入失败次数,BTSVER,QUARTER1,SDATETIME,B.OMC,B.IP,B.日常公司,基站状态,B.区域,链路测试时间,LON,小区操作状态,小区管理状态,B.VIP,LAT,B.基站类别
+ENODEBID,ENODEBID_LCRID,CELLID,LCRID,ECELLID,ENODEBNAME,BTS_VERSION,EARFCN,PHYCELLID,TAC,管理状态,操作状态,BAND,FREQ,
+DLSECTORBFWEIGHTPROFNAME,PMAX_DBM,每通道发射功率W,CHBW,ROOTSEQINDEX,PRACHCS,PRACHCONFINDEX,ULRSCS,GRPASSIGPUSCH,CELLRESELPRIO,DRX,CA,
+CELL_OPERATIONAL_STATE,LONGITUDE_OMC1,LATITUDE_OMC1,ENODEBNAME_CN,基站类型,LONGITUDE,LATITUDE,AZIMUTH,天线挂高,覆盖区域,
+VIP类型,代维,覆盖单位,NCELLNO,PS,DATETIME,状态
+	from 
+	
+	</sql>
+	
+	<!-- <sql id = countAll>
+		select 
+		
+	
+	</sql> -->
+	
+	<select id="generateVIPUnCellDataExcel" resultType="cn.huahai.tel.bean.UnCellAllNetBase">
+	<!-- <include refid="UnCellAll"></include> -->
+	  
+	<!-- ${tablename} A inner join YM_SYS_OCELL B on A.ENODEBID_CELLID = B.ENODEBID_CELLID and  (B.VIP = 'VIP')  -->     
+	select * from YM_SYS_OCELL where enodebid_cellid not in (select enodebid_cellid from ${tablename} where VIP = 'VIP')
+	
+	</select>
+	<select id="generateUnCellDataExcel" resultType="cn.huahai.tel.bean.UnCellAllNetBase" >
+	<!-- <include refid="UnCellAll"></include>
+
+		 ${tablename} A inner join YM_SYS_OCELL B on A.ENODEBID_CELLID = B.ENODEBID_CELLID  -->
+	select * from YM_SYS_OCELL where enodebid_cellid not in (select enodebid_cellid from ${tablename} )
+
+	
+	</select>
+	<select id="selectKeyPonitMinUnAllNetWork" resultType="cn.huahai.tel.bean.UnCellAllNetBase">
+	
+		 select * from YM_SYS_OCELL where enodebid_cellid in 
+		 	( select enodebid_cellid from ${conditionTableName} where enodebid_cellid in( select enodebid_cellid from YM_SYS_OCELL where enodebid_cellid not in (select enodebid_cellid from ${resourceTableName})))
+  
+	
+	</select>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
